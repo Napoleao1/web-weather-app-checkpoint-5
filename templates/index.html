@@ -58,6 +58,23 @@
             </button>
         </form>
 
+        <!-- Histórico de Busca: botões de atalho para as últimas cidades -->
+        {% if historico %}
+        <div class="mb-4">
+            <span class="d-block small text-uppercase text-secondary mb-2">
+                <i class="fa-solid fa-clock-rotate-left me-1"></i> Buscas recentes
+            </span>
+            <div class="d-flex gap-2 flex-wrap">
+                {% for cidade in historico %}
+                <form method="POST" class="d-inline">
+                    <input type="hidden" name="cidade" value="{{ cidade }}">
+                    <button type="submit" class="btn btn-sm btn-outline-info">{{ cidade }}</button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Feedback de Erro -->
         <!-- Esse bloco deve aparecer se algum erro for detectado-->
         {% if erro %}
@@ -69,9 +86,22 @@
         <!-- Bloco de Clima Encontrado -->
         <!-- Esse bloco deve aparecer se clima for encontrado -->   
         {% if clima %}
-        <div class="text-center mt-4">
+
+            {# 1º: decide a cor de fundo conforme o clima #}
+            {% if clima['weather'][0]['main'] == 'Clouds' %}
+                {% set cor = '#374151' %}
+            {% elif clima['weather'][0]['main'] == 'Rain' %}
+                {% set cor = '#1e3a8a' %}
+            {% elif clima['weather'][0]['main'] == 'Clear' %}
+                {% set cor = '#b45309' %}
+            {% else %}
+                {% set cor = '#111827' %}
+            {% endif %}
+
+            <div class="text-center mt-4 p-3 rounded" style="background-color: {{ cor }};">
             <h3 class="fw-bold text-white"><i class="fa-solid fa-location-dot text-info me-2"></i> {{ clima['name'] }}, {{ clima['sys']['country'] }}</h3>
             <p class="text-info text-capitalize mb-4 mt-1">{{ clima['weather'][0]['description'] }}</p>
+
             <div class="display-2 fw-bold text-white mb-4">{{ clima['main']['temp'] | round(1) }} °C</div>
             <p class="text-secondary mb-4">Sensação térmica: {{ clima['main']['feels_like'] | round(1) }}°C</p>
 
@@ -89,6 +119,23 @@
                         <span class="d-block small text-uppercase mb-1">Vento</span>
                         <!-- Multiplicar a velocidade do vento por 3.6 e arredondar 1 casa decimal -->
                         <span class="fs-5 fw-bold text-white">{{ (clima['wind']['speed'] * 3.6) | round(1) }} km/h</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+                <div class="col-6">
+                    <div class="info-box p-3 rounded">
+                        <i class="fa-solid fa-sun text-warning mb-2 fs-4"></i>
+                        <span class="d-block small text-uppercase mb-1">Nascer do sol</span>
+                        <span class="fs-5 fw-bold text-white">{{ nascer_sol }}</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="info-box p-3 rounded">
+                        <i class="fa-solid fa-moon text-info mb-2 fs-4"></i>
+                        <span class="d-block small text-uppercase mb-1">Pôr do sol</span>
+                        <span class="fs-5 fw-bold text-white">{{ por_sol }}</span>
                     </div>
                 </div>
             </div>
